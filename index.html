@@ -511,6 +511,372 @@
     }
 
 /***********************************************************
+ * HOMEPAGE OVERLAY (Refined)
+ ***********************************************************/
+    .homepage {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: radial-gradient(circle at 60% 40%, #080c1f 0%, #000000 90%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: opacity 1s cubic-bezier(0.19, 1, 0.22, 1), visibility 1s;
+      overflow: hidden;
+    }
+
+    .homepage.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* Cyber grid effect */
+    .home-bg-fx {
+      position: absolute;
+      inset: -50%;
+      width: 200%;
+      height: 200%;
+      background-image:
+        linear-gradient(rgba(110, 231, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(110, 231, 255, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      transform: perspective(500px) rotateX(60deg) translateY(0) translateZ(-200px);
+      animation: gridMove 20s linear infinite;
+      pointer-events: none;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 70%);
+      -webkit-mask-image: radial-gradient(circle at center, black 0%, transparent 70%);
+    }
+
+    @keyframes gridMove {
+      from {
+        transform: perspective(500px) rotateX(60deg) translateY(0) translateZ(-200px);
+      }
+
+      to {
+        transform: perspective(500px) rotateX(60deg) translateY(60px) translateZ(-200px);
+      }
+    }
+
+    .home-content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3rem;
+      max-width: 1000px;
+      padding: 2rem;
+      animation: fadeInUp 1.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .home-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    .home-logo {
+      width: 160px;
+      height: 160px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 50px rgba(110, 231, 255, 0.4));
+      animation: breatheLogo 6s ease-in-out infinite;
+    }
+
+    @keyframes breatheLogo {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.04);
+      }
+    }
+
+    .home-title {
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #ffffff 30%, #6EE7FF 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+      letter-spacing: -3px;
+      line-height: 1.0;
+      filter: drop-shadow(0 0 40px rgba(110, 231, 255, 0.25));
+      position: relative;
+    }
+
+    /* Subtle shine effect on text */
+    .home-title::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent 30%, rgba(255, 255, 255, 0.8) 50%, transparent 70%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      mix-blend-mode: overlay;
+      animation: textShine 6s infinite;
+      opacity: 0.7;
+    }
+
+    @keyframes textShine {
+
+      0%,
+      50% {
+        background-position: -200%;
+      }
+
+      100% {
+        background-position: 200%;
+      }
+    }
+
+    .home-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(1.1rem, 2vw, 1.4rem);
+      color: rgba(167, 179, 214, 0.9);
+      max-width: 700px;
+      margin: 0;
+      line-height: 1.6;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+    }
+
+    .home-cta {
+      position: relative;
+      background: rgba(110, 231, 255, 0.03);
+      border: 1px solid rgba(110, 231, 255, 0.3);
+      color: #6EE7FF;
+      font-size: 1.25rem;
+      font-weight: 700;
+      padding: 1.4rem 4rem;
+      border-radius: 4px;
+      /* More techy, less rounded */
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 0 30px rgba(110, 231, 255, 0.05);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+
+    .home-cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: -100%;
+      width: 100%;
+      background: linear-gradient(90deg, transparent, rgba(110, 231, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .home-cta:hover::before {
+      left: 100%;
+    }
+
+    .home-cta:hover {
+      background: rgba(110, 231, 255, 0.1);
+      color: #fff;
+      box-shadow: 0 0 60px rgba(110, 231, 255, 0.4), inset 0 0 20px rgba(110, 231, 255, 0.1);
+      transform: translateY(-2px);
+      border-color: #6EE7FF;
+    }
+
+    /* Small decorative elements */
+    .deco-line {
+      width: 2px;
+      height: 100px;
+      background: linear-gradient(to bottom, transparent, #6EE7FF, transparent);
+      position: absolute;
+      left: 50%;
+      top: -100px;
+      transform: translateX(-50%);
+      opacity: 0.5;
+    }
+
+    /* Cyber Glitch / Breach Transition */
+    .glitch-active .home-content {
+      animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+      filter: contrast(1.5) brightness(1.2);
+    }
+
+    .glitch-active .home-bg-fx {
+      animation: panic-grid 0.2s linear infinite;
+      background-image:
+        linear-gradient(rgba(255, 50, 50, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 50, 50, 0.1) 1px, transparent 1px);
+    }
+
+    .glitch-active .home-title {
+      text-shadow: 2px 0 #ff0000, -2px 0 #00ff00;
+      animation: noise-anim 0.2s infinite linear alternate-reverse;
+    }
+
+    @keyframes glitch-skew {
+      0% {
+        transform: skew(0deg);
+      }
+
+      20% {
+        transform: skew(-10deg);
+        filter: hue-rotate(90deg);
+      }
+
+      40% {
+        transform: skew(10deg);
+        filter: hue-rotate(-90deg);
+      }
+
+      60% {
+        transform: skew(-5deg);
+      }
+
+      80% {
+        transform: skew(5deg);
+      }
+
+      100% {
+        transform: skew(0deg);
+      }
+    }
+
+    @keyframes panic-grid {
+      0% {
+        transform: scale(1);
+        filter: hue-rotate(0deg);
+      }
+
+      50% {
+        transform: scale(1.1);
+        filter: hue-rotate(45deg);
+      }
+
+      100% {
+        transform: scale(1);
+        filter: hue-rotate(0deg);
+      }
+    }
+
+    @keyframes noise-anim {
+      0% {
+        clip-path: inset(10% 0 80% 0);
+      }
+
+      20% {
+        clip-path: inset(80% 0 10% 0);
+      }
+
+      40% {
+        clip-path: inset(40% 0 50% 0);
+      }
+
+      60% {
+        clip-path: inset(10% 0 60% 0);
+      }
+
+      80% {
+        clip-path: inset(70% 0 20% 0);
+      }
+
+      100% {
+        clip-path: inset(30% 0 40% 0);
+      }
+    }
+
+    .breach-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      font-weight: 900;
+      color: red;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      font-family: 'Courier New', Courier, monospace;
+      text-transform: uppercase;
+      letter-spacing: 5px;
+    }
+
+    .breach-text.active {
+      animation: flash-breach 0.8s steps(1) forwards;
+    }
+
+    @keyframes flash-breach {
+      0% {
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+        content: "ACCESSING...";
+        color: #6EE7FF;
+      }
+
+      30% {
+        opacity: 0;
+      }
+
+      40% {
+        opacity: 1;
+        content: "DECRYPTING...";
+        color: #ffff00;
+      }
+
+      60% {
+        opacity: 0;
+      }
+
+      70% {
+        opacity: 1;
+        content: "BREACH SUCCESS";
+        color: #ff0000;
+        background: black;
+      }
+
+      90% {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+/***********************************************************
  * SITE NOTICE – UNDER CONSTRUCTION
  ***********************************************************/
 .site-notice{
@@ -562,6 +928,23 @@
 </head>
 <body>
   <div class="app">
+    <!-- HOMEPAGE OVERLAY -->
+    <div id="homepage" class="homepage">
+      <div class="home-bg-fx"></div>
+      <div class="home-content">
+        <div class="deco-line"></div>
+        <div class="home-header">
+          <img src="fcm_logo.png" class="home-logo" alt="FCM Logo" />
+          <h1 class="home-title" data-text="Fraud Capital Markets">Fraud Capital Markets</h1>
+        </div>
+        <p class="home-subtitle">A space for exploring fraud and financial crime events across the world</p>
+
+        <!-- Refined Interaction -->
+        <button id="enterBtn" class="home-cta">
+          <span>ENTER MARKET</span>
+        </button>
+      </div>
+    </div>
     <!-- Floating controls (semi-transparent) -->
     <div class="topbar" id="topbar">
       <!-- LEFT: logo.png (no box) -->
@@ -2371,6 +2754,53 @@ smoothZoomTick();
         }
       } catch {}
     })();
+/***********************************************************
+ * HOMEPAGE LOGIC - CYBER TRANSITION
+ ***********************************************************/
+    const enterBtn = document.getElementById('enterBtn');
+    const homepage = document.getElementById('homepage');
+
+    // Inject Breach Text Container
+    const breachDiv = document.createElement('div');
+    breachDiv.className = 'breach-text';
+    breachDiv.innerHTML = 'INITIALIZING...';
+    homepage.appendChild(breachDiv);
+
+    if (enterBtn && homepage) {
+      enterBtn.addEventListener('click', () => {
+        // 1. Activate Glitch Mode
+        homepage.classList.add('glitch-active');
+
+        // 2. Change Text to look like code execution
+        enterBtn.innerHTML = '<span>> EXECUTING_BREACH...</span>';
+        enterBtn.style.borderColor = 'red';
+        enterBtn.style.color = 'red';
+        enterBtn.style.background = 'rgba(255,0,0,0.1)';
+
+        // 3. Trigger Flash/Overlay Sequence
+        setTimeout(() => {
+          breachDiv.innerText = "ACCESS GRANTED";
+          breachDiv.classList.add('active');
+        }, 400);
+
+        // 4. Final Unlock (Fade out)
+        setTimeout(() => {
+          homepage.classList.remove('glitch-active');
+          homepage.classList.add('hidden'); // Fade out by CSS
+
+          // Optional: Zoom globe rapidly
+          if (typeof globe !== 'undefined') {
+            globe.controls().autoRotateSpeed = 5.0;
+            setTimeout(() => { globe.controls().autoRotateSpeed = 0.22; }, 2000);
+          }
+
+        }, 1400); // Wait for the transition "drama"
+
+        setTimeout(() => {
+          homepage.style.display = 'none';
+        }, 2200);
+      });
+    }
   </script>
 
 <!-- Site under construction notice -->
