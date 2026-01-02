@@ -537,9 +537,16 @@
       grid-template-columns: 60px 1fr;
       grid-template-rows: auto auto;
       row-gap: 8px;
+      align-items: start;
     }
+    .brand img{ width:56px; height:56px; }
+    .ca-wrap{ grid-column: 2; grid-row: 1; }
+    .ca-text{ font-size: 11px; }
     .actions{
-      grid-column: 1 / -1;
+      grid-column: 2;
+      grid-row: 2;
+      flex-direction: column;
+      align-items: flex-end;
       justify-content: flex-start;
       gap: 8px;
     }
@@ -547,9 +554,8 @@
     .twitter{
       padding: 11px 14px;
       font-size: 12px;
+      width: auto;
     }
-    .brand img{ width:56px; height:56px; }
-    .ca-text{ font-size: 11px; }
     }
 
 /***********************************************************
