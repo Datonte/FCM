@@ -293,6 +293,44 @@
       box-shadow: 0 24px 70px rgba(110,231,255,.12);
     }
 
+    .menu-toggle{
+      display:none;
+      pointer-events:auto;
+      align-items:center;
+      justify-content:center;
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(13,22,48,.32);
+      color: rgba(234,240,255,.96);
+      cursor:pointer;
+      transition: transform .14s ease, border-color .14s ease, background .14s ease, box-shadow .14s ease;
+      box-shadow: 0 12px 40px rgba(0,0,0,.28);
+    }
+    .menu-toggle:hover{
+      transform: translateY(-1px);
+      border-color: rgba(110,231,255,.28);
+      background: rgba(13,22,48,.52);
+    }
+
+    .menu-panel{
+      position:absolute;
+      top:60px;
+      right:14px;
+      z-index:70;
+      display:none;
+      flex-direction:column;
+      gap:10px;
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(13,22,48,.9);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 22px 70px rgba(0,0,0,.35);
+    }
+    .menu-panel.open{ display:flex; }
+
     /***********************************************************
      * MAIN
      ***********************************************************/
@@ -534,27 +572,30 @@
 
     @media (max-width: 560px){
     .topbar{
-      grid-template-columns: 60px 1fr;
-      grid-template-rows: auto auto;
-      row-gap: 8px;
-      align-items: start;
+      grid-template-columns: 60px 1fr 48px;
+      grid-template-rows: auto;
+      align-items: center;
+      row-gap: 0;
     }
     .brand img{ width:56px; height:56px; }
-    .ca-wrap{ grid-column: 2; grid-row: 1; }
+    .ca-wrap{ grid-column: 2; }
     .ca-text{ font-size: 11px; }
     .actions{
-      grid-column: 2;
-      grid-row: 2;
-      flex-direction: column;
-      align-items: flex-end;
-      justify-content: flex-start;
-      gap: 8px;
+      display:none;
+    }
+    .menu-toggle{
+      display:flex;
     }
     .buy,
     .twitter{
       padding: 11px 14px;
       font-size: 12px;
-      width: auto;
+      width: 100%;
+    }
+    .menu-panel{
+      top:58px;
+      right:14px;
+      width: 220px;
     }
     }
 
@@ -1010,12 +1051,25 @@
         </div>
       </div>
 
+      <!-- Mobile menu toggle -->
+      <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+        <i class="bi bi-list" aria-hidden="true"></i>
+      </button>
+
       <!-- RIGHT: Buy button (no icon) -->
       <div class="actions">
         <a class="twitter" href="https://twitter.com/" target="_blank" rel="noopener noreferrer">
           <i class="bi bi-twitter-x"></i> Twitter
         </a>
         <!-- Replace href with your real Pump.fun link -->
+        <a class="buy" href="https://pump.fun/" target="_blank" rel="noopener noreferrer">BUY $FCM</a>
+      </div>
+
+      <!-- Mobile dropdown for actions -->
+      <div class="menu-panel" id="menuPanel">
+        <a class="twitter" href="https://twitter.com/" target="_blank" rel="noopener noreferrer">
+          <i class="bi bi-twitter-x"></i> Twitter
+        </a>
         <a class="buy" href="https://pump.fun/" target="_blank" rel="noopener noreferrer">BUY $FCM</a>
       </div>
     </div>
@@ -1083,11 +1137,14 @@
 
       caBar: document.getElementById('caBar'),
       caText: document.getElementById('caText'),
-      caFloat: document.getElementById('caFloat')
+      caFloat: document.getElementById('caFloat'),
+
+      menuToggle: document.getElementById('menuToggle'),
+      menuPanel: document.getElementById('menuPanel')
     };
 
     // CHANGE THIS to your real contract address
-    const CONTRACT_ADDRESS = "Contact Address Updating";
+    const CONTRACT_ADDRESS = "JZ5VEEAck9SCqrfRR5p2NGZNewqi2BTeYVTac32pump";
     el.caText.textContent = CONTRACT_ADDRESS;
 
     const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
@@ -2744,6 +2801,25 @@ smoothZoomTick();
     });
 
     document.addEventListener('click', () => hideTooltip());
+
+    /***********************************************************
+     * MOBILE MENU TOGGLE
+     ***********************************************************/
+    if (el.menuToggle && el.menuPanel){
+      const closeMenu = () => el.menuPanel.classList.remove('open');
+      el.menuToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        el.menuPanel.classList.toggle('open');
+      });
+      document.addEventListener('click', (e) => {
+        if (!el.menuPanel.contains(e.target) && e.target !== el.menuToggle){
+          closeMenu();
+        }
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMenu();
+      });
+    }
 
     /***********************************************************
      * CURSOR BEHAVIOR
