@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fraud Capital Markets</title>
+
+  <link rel="icon" type="image/png" href="fcm_logo.png" />
+
+  <!-- Fonts + Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    :root {
+      --bg: #050713;
+      --text: #EAF0FF;
+      --muted: #A7B3D6;
+      --accent: #6EE7FF;
+      --accent2: #A78BFA;
+      --card: rgba(13, 22, 48, .88);
+      --stroke: rgba(255, 255, 255, .12);
+      --shadow: 0 18px 70px rgba(0, 0, 0, .55);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      overflow: hidden;
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(110, 231, 255, .07), transparent 62%),
+        radial-gradient(900px 550px at 85% 15%, rgba(167, 139, 250, .06), transparent 60%),
+        linear-gradient(180deg, #070A12, #040611 55%, #03040d);
+    }
+
+    /* CSS stars are intentionally subtle. Real depth comes from the 3D starfield. */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -2;
+      background:
+        radial-gradient(1px 1px at 5% 10%, rgba(255, 255, 255, .9), transparent 50%),
+        radial-gradient(1px 1px at 12% 40%, rgba(255, 255, 255, .7), transparent 50%),
+        radial-gradient(1px 1px at 18% 75%, rgba(255, 255, 255, .8), transparent 50%),
+        radial-gradient(1px 1px at 25% 22%, rgba(255, 255, 255, .6), transparent 50%),
+        radial-gradient(1px 1px at 33% 60%, rgba(255, 255, 255, .75), transparent 50%),
+        radial-gradient(1px 1px at 41% 15%, rgba(255, 255, 255, .85), transparent 50%),
+        radial-gradient(1px 1px at 48% 48%, rgba(255, 255, 255, .7), transparent 50%),
+        radial-gradient(1px 1px at 55% 82%, rgba(255, 255, 255, .65), transparent 50%),
+        radial-gradient(1px 1px at 63% 28%, rgba(255, 255, 255, .9), transparent 50%),
+        radial-gradient(1px 1px at 70% 68%, rgba(255, 255, 255, .75), transparent 50%),
+        radial-gradient(1px 1px at 78% 18%, rgba(255, 255, 255, .85), transparent 50%),
+        radial-gradient(1px 1px at 85% 55%, rgba(255, 255, 255, .7), transparent 50%),
+        radial-gradient(1px 1px at 92% 32%, rgba(255, 255, 255, .9), transparent 50%),
+        radial-gradient(2px 2px at 14% 58%, rgba(255, 255, 255, .45), transparent 55%),
+        radial-gradient(2px 2px at 36% 8%, rgba(255, 255, 255, .4), transparent 55%),
+        radial-gradient(2px 2px at 57% 12%, rgba(255, 255, 255, .35), transparent 55%),
+        radial-gradient(2px 2px at 74% 88%, rgba(255, 255, 255, .4), transparent 55%),
+        radial-gradient(2px 2px at 88% 76%, rgba(255, 255, 255, .45), transparent 55%);
+      opacity: 0.22;
+    }
+
+    /***********************************************************
+     * LAYOUT
+     ***********************************************************/
+    .app {
+      height: 100vh;
+      display: block;
+    }
+
+    /* No real header bar (globe stays perfectly centered).
+       We use a floating, semi-transparent top bar overlay instead. */
+    /* Floating elements only — NO visible header bar */
+    .topbar {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      z-index: 50;
+      display: grid;
+      grid-template-columns: 140px 1fr 160px;
+      align-items: center;
+      gap: 12px;
+      padding: 0;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      pointer-events: none;
+    }
+
+    /* topbar is fully transparent (no hover background) */
+    .topbar:hover {
+      background: transparent;
+      border-color: transparent;
+    }
+
+    /***********************************************************
+     * LEFT: LOGO (logo.png) — no box, just the PNG
+     ***********************************************************/
+    /* LEFT: logo (clickable) */
+    .brand {
+      pointer-events: none;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      min-width: 0;
+    }
+
+    .brand a {
+      pointer-events: auto;
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .brand img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      display: block;
+      transform: translateZ(0);
+      transition: transform .16s ease, filter .16s ease;
+      /* subtle earth-like rim glow */
+      filter:
+        drop-shadow(0 0 6px rgba(110, 231, 255, .25)) drop-shadow(0 0 14px rgba(110, 231, 255, .18)) drop-shadow(0 14px 28px rgba(0, 0, 0, .35));
+    }
+
+    .brand a:hover img {
+      transform: scale(1.06);
+      filter: drop-shadow(0 18px 34px rgba(0, 0, 0, .45));
+    }
+
+    /***********************************************************
+     * CENTER: CONTRACT ADDRESS COPY BAR
+     ***********************************************************/
+    /* CENTER: CA bar only (container is click-through) */
+    .ca-wrap {
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+    }
+
+    .ca {
+      pointer-events: auto;
+
+      width: min(760px, 100%);
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, .12);
+      /* semi-transparent fill only */
+      background: rgba(13, 22, 48, .22);
+      backdrop-filter: blur(10px);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: transform .14s ease, border-color .14s ease, background .14s ease, box-shadow .14s ease;
+      box-shadow: 0 18px 60px rgba(0, 0, 0, .25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ca:hover {
+      transform: translateY(-1px);
+      border-color: rgba(110, 231, 255, .28);
+      background: rgba(13, 22, 48, .48);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, .35);
+    }
+
+    .ca-text {
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(234, 240, 255, .92);
+      letter-spacing: .25px;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      transition: opacity .18s ease, transform .18s ease;
+      will-change: opacity, transform;
+    }
+
+    .ca.copied .ca-text {
+      opacity: 0;
+      transform: translateY(3px);
+    }
+
+    .ca-float {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .35px;
+      color: rgba(234, 240, 255, .96);
+      opacity: 0;
+      transform: translateY(-3px);
+      transition: opacity .18s ease, transform .18s ease;
+      pointer-events: none;
+    }
+
+    .ca.copied .ca-float {
+      opacity: 1;
+      transform: translateY(0px);
+    }
+
+    .ca.copied {
+      border-color: rgba(34, 197, 94, .32);
+      background: rgba(13, 22, 48, .52);
+      box-shadow: 0 24px 70px rgba(34, 197, 94, .08);
+    }
+
+    /***********************************************************
+     * RIGHT: BUY BUTTON (no icon)
+     ***********************************************************/
+    /* RIGHT: buy button only (container is click-through) */
+    .actions {
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .buy {
+      pointer-events: auto;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, .14);
+      /* semi-transparent fill only */
+      background: rgba(13, 22, 48, .24);
+      color: rgba(234, 240, 255, .96);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .25px;
+      transition: transform .14s ease, border-color .14s ease, background .14s ease, box-shadow .14s ease;
+      box-shadow: 0 18px 60px rgba(0, 0, 0, .25);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .buy:hover {
+      transform: translateY(-1px);
+      border-color: rgba(167, 139, 250, .28);
+      background: rgba(13, 22, 48, .56);
+      box-shadow: 0 24px 70px rgba(167, 139, 250, .10);
+    }
+
+    /***********************************************************
+     * MAIN
+     ***********************************************************/
+    main {
+      position: relative;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* Globe layer (full screen behind floating controls) */
+    #globeViz {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      /* no shift needed because there's no reserved header */
+      transform: none;
+    }
+
+    #globeViz canvas {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      display: block;
+    }
+
+    /* Cursor helper layer sits on top (pointer-events none) */
+    #cursorLayer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* When rotating the globe, show grab/grabbing cursor */
+    .cursor-grab canvas {
+      cursor: grab;
+    }
+
+    .cursor-grabbing canvas {
+      cursor: grabbing;
+    }
+
+    /***********************************************************
+     * MARKERS (HTML)
+     ***********************************************************/
+    .fg-marker {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      /* Keep marker glued to the exact geo point.
+         No hover transform animations here (they can look like drifting). */
+      transform: translate(-4px, -4px);
+      pointer-events: auto;
+      user-select: none;
+      will-change: transform;
+      filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .35));
+      cursor: pointer;
+    }
+
+    /* Big visible location dot */
+    .fg-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, .98), rgba(110, 231, 255, .95) 40%, rgba(110, 231, 255, .65) 70%);
+      border: 1px solid rgba(255, 255, 255, .35);
+      box-shadow:
+        0 0 0 6px rgba(110, 231, 255, .10),
+        0 0 22px rgba(110, 231, 255, .22);
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    /* Pulse ring */
+    .fg-dot::after {
+      content: "";
+      position: absolute;
+      inset: -10px;
+      border-radius: 999px;
+      border: 2px solid rgba(110, 231, 255, .35);
+      transform: scale(.75);
+      opacity: .95;
+      animation: fgPulse 1.55s ease-out infinite;
+    }
+
+    @keyframes fgPulse {
+      0% {
+        transform: scale(.55);
+        opacity: .85;
+      }
+
+      70% {
+        transform: scale(1.15);
+        opacity: 0;
+      }
+
+      100% {
+        transform: scale(1.15);
+        opacity: 0;
+      }
+    }
+
+    /* Smaller always-visible label (for many markers) */
+    .fg-label {
+      font-size: 10.5px;
+      font-weight: 900;
+      line-height: 1;
+      color: rgba(234, 240, 255, .94);
+      padding: 6px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, .12);
+      background: rgba(13, 22, 48, .50);
+      backdrop-filter: blur(8px);
+      max-width: 220px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: border-color .12s ease, background .12s ease;
+    }
+
+    .fg-marker:hover .fg-label {
+      border-color: rgba(110, 231, 255, .26);
+      background: rgba(13, 22, 48, .64);
+    }
+
+    /***********************************************************
+     * TOOLTIP (hover)
+     ***********************************************************/
+    .tooltip {
+      position: absolute;
+      z-index: 20;
+      width: min(440px, calc(100vw - 24px));
+      border-radius: var(--radius);
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, var(--card), rgba(7, 10, 18, .92));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+      display: none;
+      transform-origin: top left;
+      animation: pop .14s ease-out;
+      pointer-events: none;
+    }
+
+    @keyframes pop {
+      from {
+        transform: scale(.98);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .tooltip-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+    }
+
+    .tooltip-title {
+      font-weight: 900;
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .tooltip-body {
+      padding: 12px;
+    }
+
+    .tooltip-meta {
+      font-size: 11.5px;
+      color: var(--muted);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .tooltip-meta i {
+      color: rgba(110, 231, 255, .85);
+    }
+
+    .tooltip-text {
+      margin-top: 10px;
+      font-size: 12px;
+      color: rgba(234, 240, 255, .88);
+      line-height: 1.55;
+    }
+
+    .tooltip-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tip-btn,
+    .tip-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, .14);
+      background: rgba(13, 22, 48, .35);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 12px;
+      transition: transform .12s ease, border-color .12s ease;
+      pointer-events: auto;
+    }
+
+    .tip-link:hover {
+      transform: translateY(-1px);
+      border-color: rgba(110, 231, 255, .30);
+    }
+
+    .tip-btn {
+      cursor: not-allowed;
+      opacity: .78;
+      pointer-events: none;
+      border-color: rgba(255, 255, 255, .10);
+    }
+
+    .tip-btn i {
+      color: rgba(110, 231, 255, .7);
+    }
+
+    /***********************************************************
+     * CLICK POPUP
+     ***********************************************************/
+    .popup {
+      position: absolute;
+      z-index: 10;
+      width: min(380px, calc(100vw - 24px));
+      border-radius: var(--radius);
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, var(--card), rgba(7, 10, 18, .92));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+      display: none;
+      transform-origin: top left;
+      animation: pop .14s ease-out;
+    }
+
+    .popup-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+    }
+
+    .popup-title {
+      font-weight: 900;
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .popup-close {
+      border: 1px solid rgba(255, 255, 255, .12);
+      background: rgba(255, 255, 255, .04);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 8px 10px;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    .popup-body {
+      padding: 12px;
+    }
+
+    .popup-meta {
+      font-size: 11.5px;
+      color: var(--muted);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .popup-meta i {
+      color: rgba(110, 231, 255, .85);
+    }
+
+    .popup-text {
+      margin-top: 10px;
+      font-size: 12px;
+      color: rgba(234, 240, 255, .88);
+      line-height: 1.55;
+    }
+
+    .popup-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .popup-actions a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, .14);
+      background: rgba(13, 22, 48, .35);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 12px;
+      transition: transform .12s ease, border-color .12s ease;
+    }
+
+    .popup-actions a:hover {
+      transform: translateY(-1px);
+      border-color: rgba(110, 231, 255, .30);
+    }
+
+    /***********************************************************
+     * RESPONSIVE
+     ***********************************************************/
+    @media (max-width: 860px) {
+      .topbar {
+        grid-template-columns: 90px 1fr 130px;
+      }
+
+      .ca {
+        width: 100%;
+      }
+
+      .brand img {
+        width: 48px;
+        height: 48px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .topbar {
+        grid-template-columns: 70px 1fr 120px;
+      }
+
+      .brand img {
+        width: 44px;
+        height: 44px;
+      }
+
+      .ca-text {
+        font-size: 11px;
+      }
+    }
+
+    /***********************************************************
+     * HOMEPAGE OVERLAY (Refined)
+     ***********************************************************/
+    .homepage {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: radial-gradient(circle at 60% 40%, #080c1f 0%, #000000 90%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: opacity 1s cubic-bezier(0.19, 1, 0.22, 1), visibility 1s;
+      overflow: hidden;
+    }
+
+    .homepage.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* Cyber grid effect */
+    .home-bg-fx {
+      position: absolute;
+      inset: -50%;
+      width: 200%;
+      height: 200%;
+      background-image:
+        linear-gradient(rgba(110, 231, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(110, 231, 255, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      transform: perspective(500px) rotateX(60deg) translateY(0) translateZ(-200px);
+      animation: gridMove 20s linear infinite;
+      pointer-events: none;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 70%);
+      -webkit-mask-image: radial-gradient(circle at center, black 0%, transparent 70%);
+    }
+
+    @keyframes gridMove {
+      from {
+        transform: perspective(500px) rotateX(60deg) translateY(0) translateZ(-200px);
+      }
+
+      to {
+        transform: perspective(500px) rotateX(60deg) translateY(60px) translateZ(-200px);
+      }
+    }
+
+    .home-content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3rem;
+      max-width: 1000px;
+      padding: 2rem;
+      animation: fadeInUp 1.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .home-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    .home-logo {
+      width: 160px;
+      height: 160px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 50px rgba(110, 231, 255, 0.4));
+      animation: breatheLogo 6s ease-in-out infinite;
+    }
+
+    @keyframes breatheLogo {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.04);
+      }
+    }
+
+    .home-title {
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #ffffff 30%, #6EE7FF 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+      letter-spacing: -3px;
+      line-height: 1.0;
+      filter: drop-shadow(0 0 40px rgba(110, 231, 255, 0.25));
+      position: relative;
+    }
+
+    /* Subtle shine effect on text */
+    .home-title::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent 30%, rgba(255, 255, 255, 0.8) 50%, transparent 70%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      mix-blend-mode: overlay;
+      animation: textShine 6s infinite;
+      opacity: 0.7;
+    }
+
+    @keyframes textShine {
+
+      0%,
+      50% {
+        background-position: -200%;
+      }
+
+      100% {
+        background-position: 200%;
+      }
+    }
+
+    .home-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(1.1rem, 2vw, 1.4rem);
+      color: rgba(167, 179, 214, 0.9);
+      max-width: 700px;
+      margin: 0;
+      line-height: 1.6;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+    }
+
+    .home-cta {
+      position: relative;
+      background: rgba(110, 231, 255, 0.03);
+      border: 1px solid rgba(110, 231, 255, 0.3);
+      color: #6EE7FF;
+      font-size: 1.25rem;
+      font-weight: 700;
+      padding: 1.4rem 4rem;
+      border-radius: 4px;
+      /* More techy, less rounded */
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 0 30px rgba(110, 231, 255, 0.05);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+
+    .home-cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: -100%;
+      width: 100%;
+      background: linear-gradient(90deg, transparent, rgba(110, 231, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .home-cta:hover::before {
+      left: 100%;
+    }
+
+    .home-cta:hover {
+      background: rgba(110, 231, 255, 0.1);
+      color: #fff;
+      box-shadow: 0 0 60px rgba(110, 231, 255, 0.4), inset 0 0 20px rgba(110, 231, 255, 0.1);
+      transform: translateY(-2px);
+      border-color: #6EE7FF;
+    }
+
+    /* Small decorative elements */
+    .deco-line {
+      width: 2px;
+      height: 100px;
+      background: linear-gradient(to bottom, transparent, #6EE7FF, transparent);
+      position: absolute;
+      left: 50%;
+      top: -100px;
+      transform: translateX(-50%);
+      opacity: 0.5;
+    }
+
+    /* Cyber Glitch / Breach Transition */
+    .glitch-active .home-content {
+      animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+      filter: contrast(1.5) brightness(1.2);
+    }
+
+    .glitch-active .home-bg-fx {
+      animation: panic-grid 0.2s linear infinite;
+      background-image:
+        linear-gradient(rgba(255, 50, 50, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 50, 50, 0.1) 1px, transparent 1px);
+    }
+
+    .glitch-active .home-title {
+      text-shadow: 2px 0 #ff0000, -2px 0 #00ff00;
+      animation: noise-anim 0.2s infinite linear alternate-reverse;
+    }
+
+    @keyframes glitch-skew {
+      0% {
+        transform: skew(0deg);
+      }
+
+      20% {
+        transform: skew(-10deg);
+        filter: hue-rotate(90deg);
+      }
+
+      40% {
+        transform: skew(10deg);
+        filter: hue-rotate(-90deg);
+      }
+
+      60% {
+        transform: skew(-5deg);
+      }
+
+      80% {
+        transform: skew(5deg);
+      }
+
+      100% {
+        transform: skew(0deg);
+      }
+    }
+
+    @keyframes panic-grid {
+      0% {
+        transform: scale(1);
+        filter: hue-rotate(0deg);
+      }
+
+      50% {
+        transform: scale(1.1);
+        filter: hue-rotate(45deg);
+      }
+
+      100% {
+        transform: scale(1);
+        filter: hue-rotate(0deg);
+      }
+    }
+
+    @keyframes noise-anim {
+      0% {
+        clip-path: inset(10% 0 80% 0);
+      }
+
+      20% {
+        clip-path: inset(80% 0 10% 0);
+      }
+
+      40% {
+        clip-path: inset(40% 0 50% 0);
+      }
+
+      60% {
+        clip-path: inset(10% 0 60% 0);
+      }
+
+      80% {
+        clip-path: inset(70% 0 20% 0);
+      }
+
+      100% {
+        clip-path: inset(30% 0 40% 0);
+      }
+    }
+
+    .breach-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      font-weight: 900;
+      color: red;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      font-family: 'Courier New', Courier, monospace;
+      text-transform: uppercase;
+      letter-spacing: 5px;
+    }
+
+    .breach-text.active {
+      animation: flash-breach 0.8s steps(1) forwards;
+    }
+
+    @keyframes flash-breach {
+      0% {
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+        content: "ACCESSING...";
+        color: #6EE7FF;
+      }
+
+      30% {
+        opacity: 0;
+      }
+
+      40% {
+        opacity: 1;
+        content: "DECRYPTING...";
+        color: #ffff00;
+      }
+
+      60% {
+        opacity: 0;
+      }
+
+      70% {
+        opacity: 1;
+        content: "BREACH SUCCESS";
+        color: #ff0000;
+        background: black;
+      }
+
+      90% {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <!-- HOMEPAGE OVERLAY -->
+    <div id="homepage" class="homepage">
+      <div class="home-bg-fx"></div>
+      <div class="home-content">
+        <div class="deco-line"></div>
+        <div class="home-header">
+          <img src="fcm_logo.png" class="home-logo" alt="FCM Logo" />
+          <h1 class="home-title" data-text="Fraud Capital Markets">Fraud Capital Markets</h1>
+        </div>
+        <p class="home-subtitle">A space for exploring fraud and financial crime events across the world</p>
+
+        <!-- Refined Interaction -->
+        <button id="enterBtn" class="home-cta">
+          <span>ENTER MARKET</span>
+        </button>
+      </div>
+    </div>
+    <!-- Floating controls (semi-transparent) -->
+    <div class="topbar" id="topbar">
+      <!-- LEFT: logo.png (no box) -->
+      <div class="brand">
+        <a href="#" aria-label="Home">
+          <img src="fcm_logo.png" alt="Logo" />
+        </a>
+      </div>
+
+      <!-- CENTER: Copyable Contract Address (code only) -->
+      <div class="ca-wrap">
+        <div class="ca" id="caBar" title="Click to copy">
+          <div class="ca-text" id="caText">0x0000000000000000000000000000000000000000</div>
+          <div class="ca-float" id="caFloat">Copied!</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Buy button (no icon) -->
+      <div class="actions">
+        <!-- Replace href with your real Pump.fun link -->
+        <a class="buy" href="https://pump.fun/" target="_blank" rel="noopener noreferrer">BUY $FCM</a>
+      </div>
+    </div>
+
+    <main>
+      <div id="globeViz"></div>
+      <div id="cursorLayer" aria-hidden="true"></div>
+
+      <!-- Hover tooltip (FULL DETAILS on hover) -->
+      <div class="tooltip" id="tooltip" aria-hidden="true">
+        <div class="tooltip-head">
+          <div class="tooltip-title" id="tipTitle">Title</div>
+        </div>
+        <div class="tooltip-body">
+          <div class="tooltip-meta" id="tipMeta"></div>
+          <div class="tooltip-text" id="tipText"></div>
+          <div class="tooltip-actions" id="tipActions"></div>
+        </div>
+      </div>
+
+      <!-- Click popup -->
+      <div class="popup" id="popup">
+        <div class="popup-head">
+          <div class="popup-title" id="popupTitle">Title</div>
+          <button class="popup-close" id="popupClose" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="popup-body">
+          <div class="popup-meta" id="popupMeta"></div>
+          <div class="popup-text" id="popupText"></div>
+          <div class="popup-actions" id="popupActions"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/globe.gl@2.45.0/dist/globe.gl.min.js"></script>
+
+  <script>
+    /***********************************************************
+     * Realistic globe + 3D starfield
+     * - Hover shows full info
+     * - Open article appears but is locked until first click on the pin
+     * - CA click morphs to Copied! then back
+     ***********************************************************/
+
+    // Realistic textures (night)
+    const EARTH_IMG = "//unpkg.com/three-globe/example/img/earth-night.jpg";
+    const BUMP_IMG = "//unpkg.com/three-globe/example/img/earth-topology.png";
+
+    const el = {
+      tooltip: document.getElementById('tooltip'),
+      tipTitle: document.getElementById('tipTitle'),
+      tipMeta: document.getElementById('tipMeta'),
+      tipText: document.getElementById('tipText'),
+      tipActions: document.getElementById('tipActions'),
+
+      popup: document.getElementById('popup'),
+      popupTitle: document.getElementById('popupTitle'),
+      popupMeta: document.getElementById('popupMeta'),
+      popupText: document.getElementById('popupText'),
+      popupActions: document.getElementById('popupActions'),
+      popupClose: document.getElementById('popupClose'),
+
+      caBar: document.getElementById('caBar'),
+      caText: document.getElementById('caText'),
+      caFloat: document.getElementById('caFloat')
+    };
+
+    // CHANGE THIS to your real contract address
+    const CONTRACT_ADDRESS = "0x0000000000000000000000000000000000000000";
+    el.caText.textContent = CONTRACT_ADDRESS;
+
+    const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+
+    const fmtDate = (d) => {
+      try {
+        return new Intl.DateTimeFormat('en-US', {
+          year: 'numeric', month: 'short', day: '2-digit'
+        }).format(d);
+      } catch {
+        return d.toISOString().slice(0, 10);
+      }
+    };
+
+    function safeText(s) {
+      return (s || "").toString().replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    /***********************************************************
+     * COPY CA (smooth text swap)
+     ***********************************************************/
+    let caTimer = null;
+    el.caBar.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(CONTRACT_ADDRESS);
+      } catch {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = CONTRACT_ADDRESS;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+
+      el.caBar.classList.add('copied');
+      if (caTimer) clearTimeout(caTimer);
+      caTimer = setTimeout(() => {
+        el.caBar.classList.remove('copied');
+      }, 950);
+    });
+
+    /***********************************************************
+     * REAL NEWS (expanded)
+     * Tip: each item is a single marker/pin.
+     ***********************************************************/
+    const NEWS = [
+
+
+      {
+        id: 'alpha-2025-12-13-somali-fraud',
+        lat: 44.9778,
+        lng: -93.265,
+        place: 'Minneapolis, Minnesota, US',
+        dateISO: '2025-12-13',
+        label: 'MN public funds fraud (US)',
+        title: 'Report highlights alleged Minnesota program fraud tied to public funds',
+        desc: 'Alpha News MN report discussing allegations and investigations into misuse of public program funds in Minnesota.',
+        source: 'Alpha News MN',
+        url: 'https://alphanews.org/stephen-miller-somali-fraud-scandal-could-be-greatest-financial-fraud-in-us-history/'
+      },
+      {
+        id: 'reuters-2024-03-28-ftx-sbf-sentenced',
+        lat: 40.7128,
+        lng: -74.006,
+        place: 'New York City, New York, US',
+        dateISO: '2024-03-28',
+        label: 'FTX fraud sentencing (US)',
+        title: 'Sam Bankman-Fried sentenced to 25 years over FTX customer losses',
+        desc: 'Reuters report on the 25-year sentence for Sam Bankman-Fried after a jury found he stole billions from FTX customers.',
+        source: 'Reuters',
+        url: 'https://www.reuters.com/technology/sam-bankman-fried-be-sentenced-multi-billion-dollar-ftx-fraud-2024-03-28/'
+      },
+      {
+        id: 'guardian-2025-12-26-1mdb-najib-15yrs',
+        lat: 3.139,
+        lng: 101.6869,
+        place: 'Kuala Lumpur, Malaysia',
+        dateISO: '2025-12-26',
+        label: '1MDB graft sentencing (MY)',
+        title: 'Najib Razak sentenced to additional prison time in 1MDB corruption case',
+        desc: 'The Guardian report on former Malaysian PM Najib Razak receiving an additional sentence tied to the 1MDB scandal.',
+        source: 'The Guardian',
+        url: 'https://www.theguardian.com/world/2025/dec/26/former-malaysian-pm-najib-razak-found-guilty-of-abuse-of-power-in-latest-1mdb-trial'
+      },
+      {
+        id: 'europol-2025-12-04-crypto-fraud-700m',
+        lat: 35.1856,
+        lng: 33.3823,
+        place: 'Nicosia, Cyprus (raids also in Germany & Spain)',
+        dateISO: '2025-12-04',
+        label: '€700M crypto fraud takedown (EU)',
+        title: 'Europol: international takedown of crypto-fraud network laundering over €700M',
+        desc: 'Europol statement describing raids and cooperation across Cyprus, Germany, and Spain targeting a network laundering large-scale proceeds via crypto.',
+        source: 'Europol',
+        url: 'https://www.europol.europa.eu/media-press/newsroom/news/international-takedown-of-cryptocurrency-fraud-network-laundering-over-eur-700-million'
+      },
+      {
+        id: 'europol-2025-06-30-spain-crypto-investment-ring',
+        lat: 28.2916,
+        lng: -16.6291,
+        place: 'Tenerife, Canary Islands, Spain',
+        dateISO: '2025-06-30',
+        label: 'Crypto investment fraud ring (ES)',
+        title: 'Europol: crypto investment fraud ring dismantled in Spain after defrauding 5,000 victims',
+        desc: 'Europol announcement on arrests in the Canary Islands and Madrid linked to an alleged crypto-investment fraud targeting thousands worldwide.',
+        source: 'Europol',
+        url: 'https://www.europol.europa.eu/media-press/newsroom/news/crypto-investment-fraud-ring-dismantled-in-spain-after-defrauding-5-000-victims-worldwide'
+      },
+      {
+        id: 'interpol-2025-09-24-haechi-vi',
+        lat: 1.3521,
+        lng: 103.8198,
+        place: 'Singapore (INTERPOL-coordinated)',
+        dateISO: '2025-09-24',
+        label: 'Interpol Haechi VI (global)',
+        title: 'INTERPOL: Operation HAECHI VI recovers hundreds of millions tied to cyber-enabled financial crime',
+        desc: 'INTERPOL release describing Operation HAECHI VI (Apr–Aug 2025) targeting multiple scam types and recovering assets across many jurisdictions.',
+        source: 'INTERPOL',
+        url: 'https://www.interpol.int/en/News-and-Events/News/2025/USD-439-million-recovered-in-global-financial-crime-operation'
+      },
+      {
+        id: 'doj-2025-06-30-healthcare-fraud-takedown',
+        lat: 38.9072,
+        lng: -77.0369,
+        place: 'Washington, D.C., US (national operation)',
+        dateISO: '2025-06-30',
+        label: '$14.6B healthcare fraud (US)',
+        title: 'U.S. DOJ: National Health Care Fraud Takedown charges 324 defendants',
+        desc: 'DOJ press release on a nationwide crackdown alleging over $14.6B in intended losses in healthcare fraud schemes.',
+        source: 'U.S. DOJ',
+        url: 'https://www.justice.gov/opa/pr/national-health-care-fraud-takedown-results-324-defendants-charged-connection-over-146'
+      },
+      {
+        id: 'hhs-oig-2025-06-healthcare-fraud-takedown',
+        lat: 38.9072,
+        lng: -77.0369,
+        place: 'Washington, D.C., US (HHS-OIG)',
+        dateISO: '2025-06-30',
+        label: 'HHS-OIG fraud takedown (US)',
+        title: 'HHS-OIG summary of the 2025 National Health Care Fraud Takedown',
+        desc: 'HHS-OIG overview noting the takedown’s scale and intended losses, describing interagency participation and outcomes.',
+        source: 'HHS-OIG',
+        url: 'https://oig.hhs.gov/newsroom/media-materials/2025-national-health-care-fraud-takedown/'
+      },
+      {
+        id: 'reuters-2025-11-11-uk-bitcoin-laundering-qian',
+        lat: 51.5072,
+        lng: -0.1276,
+        place: 'London, UK',
+        dateISO: '2025-11-11',
+        label: 'Bitcoin laundering conviction (UK)',
+        title: 'Reuters: woman jailed in UK linked to laundering bitcoin tied to major fraud',
+        desc: 'Reuters report on a UK sentencing tied to laundering bitcoin connected to a large-scale fraud, with a major BTC seizure referenced.',
+        source: 'Reuters',
+        url: 'https://www.reuters.com/business/finance/chinese-fraud-mastermind-jailed-uk-laundering-bitcoin-2025-11-11/'
+      },
+      {
+        id: 'reuters-2025-08-06-tornado-cash-verdict',
+        lat: 40.7128,
+        lng: -74.006,
+        place: 'New York City, New York, US',
+        dateISO: '2025-08-06',
+        label: 'Tornado Cash verdict (US)',
+        title: 'Reuters: jury returns mixed verdict in Tornado Cash case',
+        desc: 'Reuters report describing a partial verdict where the jury convicted on an unlicensed money-transmitting charge but deadlocked on more serious counts.',
+        source: 'Reuters',
+        url: 'https://www.reuters.com/legal/government/us-jury-deadlocks-tornado-cash-founders-money-laundering-charge-2025-08-06/'
+      },
+      {
+        id: 'usao-sdny-2023-08-23-tornado-cash-charged',
+        lat: 40.7128,
+        lng: -74.006,
+        place: 'New York City, New York, US',
+        dateISO: '2023-08-23',
+        label: 'Tornado Cash charges (US)',
+        title: 'U.S. Attorney SDNY: Tornado Cash founders charged with money laundering & sanctions violations',
+        desc: 'DOJ announcement alleging Tornado Cash was used to launder over $1B in criminal proceeds, including by hacking groups.',
+        source: 'U.S. DOJ (SDNY)',
+        url: 'https://www.justice.gov/usao-sdny/pr/tornado-cash-founders-charged-money-laundering-and-sanctions-violations'
+      },
+      {
+        id: 'fbi-2025-12-02-burma-scam-compound-domain-seizure',
+        lat: 17.2517,
+        lng: 97.074,
+        place: 'Kyaukhat, Burma (Myanmar)',
+        dateISO: '2025-12-02',
+        label: 'Scam compound domain seizure (MM)',
+        title: 'FBI: domain seized from alleged scam compound used for fake crypto investment sites',
+        desc: 'FBI San Diego release on seizing a domain allegedly used by a scam compound in Burma for fake crypto investment fraud.',
+        source: 'FBI',
+        url: 'https://www.fbi.gov/contact-us/field-offices/sandiego/news/fbi-san-diego-investigation-leads-to-scam-center-strike-force-seizure-of-fake-cryptocurrency-investment-domain-used-by-tai-chang-scam-compound-in-burma'
+      },
+      {
+        id: 'usao-ndny-2025-04-08-pig-butchering-domain-seizure',
+        lat: 42.6526,
+        lng: -73.7562,
+        place: 'Albany, New York, US',
+        dateISO: '2025-04-08',
+        label: 'Pig-butchering scam domain (US)',
+        title: 'U.S. Secret Service seizes web domain tied to ‘pig butchering’ crypto investment scheme',
+        desc: 'DOJ release describing seizure of a domain used to facilitate a cryptocurrency ‘pig butchering’ investment scam.',
+        source: 'U.S. DOJ (NDNY)',
+        url: 'https://www.justice.gov/usao-ndny/pr/secret-service-seizes-another-web-domain-used-furtherance-cryptocurrency-pig'
+      },
+      {
+        id: 'doj-md-2024-01-29-hyperfund-charges',
+        lat: 39.2904,
+        lng: -76.6122,
+        place: 'Baltimore, Maryland, US',
+        dateISO: '2024-01-29',
+        label: 'HyperFund charges (US)',
+        title: 'U.S. DOJ: three charged in $1.89B ‘HyperFund’ cryptocurrency fraud scheme',
+        desc: 'U.S. Attorney’s Office (Maryland) release detailing charges alleging a multi-billion-dollar crypto fraud marketed as an investment opportunity.',
+        source: 'U.S. DOJ (Maryland)',
+        url: 'https://www.justice.gov/usao-md/pr/three-individuals-charged-189-billion-cryptocurrency-fraud-scheme'
+      },
+      {
+        id: 'sec-2024-05-30-hyperfund-charges',
+        lat: 38.9072,
+        lng: -77.0369,
+        place: 'Washington, D.C., US',
+        dateISO: '2024-05-30',
+        label: 'SEC HyperFund case (US)',
+        title: 'SEC charges founders/promoters tied to alleged HyperFund crypto fraud',
+        desc: 'SEC press release charging individuals in connection with an alleged fraudulent crypto scheme marketed as ‘HyperFund’.',
+        source: 'U.S. SEC',
+        url: 'https://www.sec.gov/newsroom/press-releases/2024-11'
+      },
+      {
+        id: 'ap-2025-02-24-holmes-appeal-denied',
+        lat: 37.3382,
+        lng: -121.8863,
+        place: 'San Jose, California, US',
+        dateISO: '2025-02-24',
+        label: 'Theranos appeal denied (US)',
+        title: 'AP: Elizabeth Holmes loses appeal; Theranos fraud conviction upheld',
+        desc: 'AP report on the appeals court decision upholding Holmes’ conviction and sentence for defrauding investors in Theranos.',
+        source: 'Associated Press',
+        url: 'https://apnews.com/article/193bb0a0bfe306e796acd13c151e705c'
+      },
+      {
+        id: 'reuters-2022-11-18-holmes-sentenced',
+        lat: 37.3382,
+        lng: -121.8863,
+        place: 'San Jose, California, US',
+        dateISO: '2022-11-18',
+        label: 'Theranos sentencing (US)',
+        title: 'Reuters: Elizabeth Holmes sentenced to over 11 years for Theranos investor fraud',
+        desc: 'Reuters report on Holmes’ federal sentence for fraud involving the blood-testing startup Theranos.',
+        source: 'Reuters',
+        url: 'https://www.reuters.com/business/healthcare-pharmaceuticals/elizabeth-holmes-faces-sentencing-friday-defrauding-theranos-investors-2022-11-18/'
+      },
+      {
+        id: 'reuters-2024-09-05-wirecard-damages',
+        lat: 48.1351,
+        lng: 11.582,
+        place: 'Munich, Germany',
+        dateISO: '2024-09-05',
+        label: 'Wirecard damages (DE)',
+        title: 'Reuters: Wirecard ex-CEO Markus Braun ordered to pay €140M in damages',
+        desc: 'Reuters report on a Munich court ruling ordering former Wirecard executives to pay damages related to unrepaid loans.',
+        source: 'Reuters',
+        url: 'https://www.reuters.com/world/europe/wirecard-ex-ceo-braun-two-others-ordered-pay-140-mln-euros-damages-2024-09-05/'
+      },
+      {
+        id: 'state-2024-06-26-ruja-ignatova-reward',
+        lat: 42.6977,
+        lng: 23.3219,
+        place: 'Sofia, Bulgaria (last known travel in region)',
+        dateISO: '2024-06-26',
+        label: 'OneCoin ‘Cryptoqueen’ reward',
+        title: 'U.S. State Dept renews reward information page for OneCoin fugitive Ruja Ignatova',
+        desc: 'State Department reward notice offering up to $5M for information leading to Ruja Ignatova, linked to the OneCoin fraud scheme.',
+        source: 'U.S. State Dept',
+        url: 'https://2021-2025.state.gov/reward-for-information-german-national-ruja-ignatova/'
+      },
+      {
+        id: 'fbi-pdf-ruja-ignatova-topten',
+        lat: 37.9838,
+        lng: 23.7275,
+        place: 'Athens, Greece (travel referenced)',
+        dateISO: '2022-06-30',
+        label: 'OneCoin FBI Top Ten',
+        title: 'FBI Top Ten Most Wanted: Ruja Ignatova (OneCoin) profile',
+        desc: 'FBI wanted poster PDF describing allegations that OneCoin defrauded victims of billions and noting Ignatova’s disappearance after 2017 travel.',
+        source: 'FBI',
+        url: 'https://www.fbi.gov/wanted/topten/ruja-ignatova/%40%40download.pdf'
+      },
+      {
+        id: 'toim-2025-12-30-delhi-cyber-fraud-network',
+        lat: 28.6139,
+        lng: 77.209,
+        place: 'Delhi, India',
+        dateISO: '2025-12-30',
+        label: 'Cyber fraud network busted (IN)',
+        title: 'Police bust interstate cyber fraud network linked to fake trading app & ‘digital arrest’ scam',
+        desc: 'Times of India report on arrests tied to online investment fraud and coercive ‘digital arrest’ scams in India.',
+        source: 'Times of India',
+        url: 'https://timesofindia.indiatimes.com/city/delhi/interstate-cyber-fraud-network-busted-four-men-arrested/articleshow/126239352.cms'
+      },
+      {
+        id: 'toij-2025-12-28-jaipur-crypto-fraud-recovery',
+        lat: 26.9124,
+        lng: 75.7873,
+        place: 'Jaipur, Rajasthan, India',
+        dateISO: '2025-12-28',
+        label: 'Crypto fraud recovery (IN)',
+        title: 'Jaipur cyber police recover crypto in USDT fraud case; suspects arrested',
+        desc: 'Times of India report on arrests and recovery of USDT linked to a crypto fraud involving a controlled wallet.',
+        source: 'Times of India',
+        url: 'https://timesofindia.indiatimes.com/city/jaipur/cops-recover-9l-in-crypto-fraud-case-2-held-in-jaipur/articleshow/126208378.cms'
+      },
+      {
+        id: 'ap-2025-09-26-africa-romance-scam-arrests',
+        lat: 45.764,
+        lng: 4.8357,
+        place: 'Lyon, France (INTERPOL HQ; Africa operation)',
+        dateISO: '2025-09-26',
+        label: 'Romance/sextortion arrests (Africa)',
+        title: 'AP: INTERPOL operation leads to 260 arrests tied to romance & extortion scams across Africa',
+        desc: 'AP report describing coordinated action across multiple African countries targeting online romance scams and sextortion networks.',
+        source: 'Associated Press',
+        url: 'https://apnews.com/article/85af8ffb6c257a902ce3360cabf28974'
+      }
+      ,
+      {
+        id: 'doj-2025-09-08-digital-asset-scam-sentencing',
+        lat: 34.0522,
+        lng: -118.2437,
+        place: 'Los Angeles, California, US',
+        dateISO: '2025-09-08',
+        label: '$36.9M digital asset scam (US)',
+        title: 'U.S. DOJ: California man sentenced for role in global digital asset investment scam',
+        desc: 'DOJ release on sentencing in a conspiracy that stole more than $36.9M from victims through a digital asset “investment” scam.',
+        source: 'U.S. DOJ',
+        url: 'https://www.justice.gov/opa/pr/california-man-sentenced-role-global-digital-asset-investment-scam-conspiracy-resulting'
+      },
+      {
+        id: 'fbi-2025-10-16-777-partners-fraud-charges',
+        lat: 40.7128,
+        lng: -74.0060,
+        place: 'New York City, New York, US',
+        dateISO: '2025-10-16',
+        label: '$500M investment firm fraud (US)',
+        title: 'FBI: founder and CFO of 777 Partners charged in alleged $500M fraud scheme',
+        desc: 'FBI New York announcement on charges alleging fraud and securities fraud involving more than $500M tied to the investment firm 777 Partners.',
+        source: 'FBI',
+        url: 'https://www.fbi.gov/contact-us/field-offices/newyork/news/founder-and-cfo-of-investment-firm-777-partners-charged-with-500-million-fraud-scheme'
+      },
+      {
+        id: 'europol-2025-11-05-operation-chargeback',
+        lat: 50.8503,
+        lng: 4.3517,
+        place: 'Brussels, Belgium (Europol-coordinated)',
+        dateISO: '2025-11-05',
+        label: 'Operation Chargeback card fraud (EU)',
+        title: 'Europol: Operation Chargeback targets major fraud & money-laundering networks affecting millions of cardholders',
+        desc: 'Europol report on coordinated action targeting large-scale card fraud and money laundering networks, citing millions of affected cardholders and hundreds of millions in damages.',
+        source: 'Europol',
+        url: 'https://www.europol.europa.eu/media-press/newsroom/news/operation-chargeback-43-million-cardholders-affected-eur-300-million-in-damages'
+      },
+      {
+        id: 'reuters-2025-11-14-endgame-cybercrime-arrest',
+        lat: 37.9838,
+        lng: 23.7275,
+        place: 'Athens, Greece',
+        dateISO: '2025-11-14',
+        label: 'Operation Endgame cybercrime (EU)',
+        title: 'Reuters: Greece arrests suspect linked to Europol’s “Operation Endgame” against cybercrime',
+        desc: 'Reuters report on an arrest tied to a Europol-coordinated operation against malware infrastructure and cyber-enabled crime.',
+        source: 'Reuters',
+        url: 'https://www.reuters.com/technology/greece-arrests-man-europols-global-endgame-operation-against-cybercrime-2025-11-14/'
+      },
+      {
+        id: 'fincen-2025-12-08-paxful-consent-order',
+        lat: 38.9072,
+        lng: -77.0369,
+        place: 'Washington, D.C., US',
+        dateISO: '2025-12-08',
+        label: 'FinCEN action vs Paxful (US)',
+        title: 'FinCEN: Paxful consent order cites AML program failures tied to illicit activity',
+        desc: 'FinCEN consent order describing compliance failures and deficiencies related to suspicious activity reporting and risk controls at Paxful.',
+        source: 'FinCEN',
+        url: 'https://www.fincen.gov/system/files/2025-12/PaxfulConsentOrder.pdf'
+      },
+      {
+        id: 'sec-2025-12-22-crypto-platforms-investment-clubs',
+        lat: 38.9072,
+        lng: -77.0369,
+        place: 'Washington, D.C., US',
+        dateISO: '2025-12-22',
+        label: 'SEC crypto trading platforms case (US)',
+        title: 'SEC: charges three purported crypto asset trading platforms and four investment clubs in alleged scheme',
+        desc: 'SEC press release announcing charges involving purported crypto trading platforms and investment clubs targeting retail investors.',
+        source: 'U.S. SEC',
+        url: 'https://www.sec.gov/newsroom/press-releases/2025-144-sec-charges-three-purported-crypto-asset-trading-platforms-four-investment-clubs-scheme-targeted'
+      }
+
+    ];
+    /***********************************************************
+     * RECENT NEWS FILTER (last N months)
+     * - Keeps only items within the last MAX_MONTHS months
+     * - Excludes future-dated items
+     ***********************************************************/
+    const MAX_MONTHS = 5; // change to 3 if you want only last 3 months
+
+    const now = new Date();
+    const cutoff = new Date(now);
+    cutoff.setMonth(cutoff.getMonth() - MAX_MONTHS);
+
+    const NEWS_RECENT = NEWS.filter(item => {
+      if (!item || !item.dateISO) return false;
+      const d = new Date(item.dateISO + 'T00:00:00Z');
+      if (isNaN(d.getTime())) return false;
+      return d >= cutoff && d <= now;
+    });
+
+
+
+    /***********************************************************
+     * TOOLTIP / POPUP
+     ***********************************************************/
+    const unlocked = new Set();
+
+    function hideTooltip() {
+      el.tooltip.style.display = 'none';
+      el.tooltip.setAttribute('aria-hidden', 'true');
+    }
+
+    function showTooltip(item, x, y) {
+      if (!item) return;
+
+      el.tipTitle.textContent = item.title || item.label || 'Untitled';
+
+      const when = item.dateISO ? fmtDate(new Date(item.dateISO + 'T00:00:00Z')) : '';
+      const where = item.place || '';
+      const src = item.source || '';
+
+      el.tipMeta.innerHTML = `
+        ${when ? `<span><i class="bi bi-calendar3"></i> ${safeText(when)}</span>` : ``}
+        ${where ? `<span><i class="bi bi-geo-alt"></i> ${safeText(where)}</span>` : ``}
+        ${src ? `<span><i class="bi bi-newspaper"></i> ${safeText(src)}</span>` : ``}
+      `;
+
+      el.tipText.textContent = item.desc || '';
+
+      const hasUrl = !!(item.url && String(item.url).startsWith('http'));
+      const isUnlocked = unlocked.has(item.id);
+
+      if (hasUrl && isUnlocked) {
+        el.tipActions.innerHTML = `
+          <a class="tip-link" href="${safeText(item.url)}" target="_blank" rel="noopener noreferrer">
+            <i class="bi bi-box-arrow-up-right"></i> Open article
+          </a>
+        `;
+      } else if (hasUrl) {
+        el.tipActions.innerHTML = `
+          <span class="tip-btn"><i class="bi bi-lock"></i> Open article (click the pin)</span>
+        `;
+      } else {
+        el.tipActions.innerHTML = ``;
+      }
+
+      const pad = 12;
+      const w = 440;
+      const h = 230;
+      const px = clamp(x + 14, pad, window.innerWidth - w - pad);
+      const py = clamp(y + 14, pad, window.innerHeight - h - pad);
+
+      el.tooltip.style.left = px + 'px';
+      el.tooltip.style.top = py + 'px';
+      el.tooltip.style.display = 'block';
+      el.tooltip.setAttribute('aria-hidden', 'false');
+    }
+
+    function hidePopup() { el.popup.style.display = 'none'; }
+
+    function showPopup(item, x, y) {
+      if (!item) return;
+
+      el.popupTitle.textContent = item.title || item.label || 'Untitled';
+
+      const when = item.dateISO ? fmtDate(new Date(item.dateISO + 'T00:00:00Z')) : '';
+      const where = item.place || '';
+      const src = item.source || '';
+
+      el.popupMeta.innerHTML = `
+        ${when ? `<span><i class="bi bi-calendar3"></i> ${safeText(when)}</span>` : ``}
+        ${where ? `<span><i class="bi bi-geo-alt"></i> ${safeText(where)}</span>` : ``}
+        ${src ? `<span><i class="bi bi-newspaper"></i> ${safeText(src)}</span>` : ``}
+      `;
+
+      el.popupText.textContent = item.desc || '';
+
+      const hasUrl = !!(item.url && String(item.url).startsWith('http'));
+      el.popupActions.innerHTML = hasUrl
+        ? `<a href="${safeText(item.url)}" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right"></i> Open article</a>`
+        : ``;
+
+      const pad = 12;
+      const w = 380;
+      const h = 240;
+      const px = clamp(x + 14, pad, window.innerWidth - w - pad);
+      const py = clamp(y + 14, pad, window.innerHeight - h - pad);
+
+      el.popup.style.left = px + 'px';
+      el.popup.style.top = py + 'px';
+      el.popup.style.display = 'block';
+    }
+
+    el.popupClose.addEventListener('click', hidePopup);
+
+    window.addEventListener('pointerdown', (e) => {
+      if (el.popup.style.display === 'none') return;
+      const within = el.popup.contains(e.target);
+      const isCanvas = e.target?.tagName?.toLowerCase() === 'canvas';
+      if (!within && !isCanvas) hidePopup();
+    });
+
+    /***********************************************************
+     * TOOLTIP TRACKING
+     ***********************************************************/
+    let hoveringItem = null;
+    window.addEventListener('pointermove', (e) => {
+      if (!hoveringItem) return;
+      showTooltip(hoveringItem, e.clientX, e.clientY);
+    });
+
+    /***********************************************************
+     * CREATE GLOBE
+     ***********************************************************/
+    const globe = Globe()(document.getElementById('globeViz'))
+      .globeImageUrl(EARTH_IMG)
+      .bumpImageUrl(BUMP_IMG)
+      .backgroundColor('rgba(0,0,0,0)')
+      .atmosphereAltitude(0.18)
+      .atmosphereColor('rgba(110,231,255,.45)');
+
+    // Keep camera vertically centered
+    globe.camera().position.y = 0;
+
+    globe
+      .htmlElementsData(NEWS_RECENT)
+      .htmlLat(d => d.lat)
+      .htmlLng(d => d.lng)
+      .htmlElement(d => {
+        const root = document.createElement('div');
+        root.className = 'fg-marker';
+        root.title = 'Click the pin to unlock the article';
+
+        const dot = document.createElement('div');
+        dot.className = 'fg-dot';
+
+        const label = document.createElement('div');
+        label.className = 'fg-label';
+        label.textContent = d.label || d.title || 'News';
+
+        root.appendChild(dot);
+        root.appendChild(label);
+
+        root.addEventListener('pointerenter', (ev) => {
+          hoveringItem = d;
+          showTooltip(d, ev.clientX, ev.clientY);
+        });
+
+        root.addEventListener('pointerleave', () => {
+          hoveringItem = null;
+          hideTooltip();
+        });
+
+        root.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          unlocked.add(d.id);
+
+          globe.pointOfView({ lat: d.lat, lng: d.lng, altitude: 1.55 }, 720);
+
+          if (hoveringItem && hoveringItem.id === d.id) {
+            showTooltip(d, ev.clientX, ev.clientY);
+          }
+
+          showPopup(d, ev.clientX, ev.clientY);
+        });
+
+        return root;
+      });
+
+    // Camera defaults
+    globe.pointOfView({ lat: 20, lng: 10, altitude: 2.1 }, 0);
+
+    // Smooth controls
+    globe.controls().enableDamping = true;
+    globe.controls().dampingFactor = 0.08;
+    globe.controls().rotateSpeed = 0.55;
+    globe.controls().zoomSpeed = 0.85;
+    globe.controls().autoRotate = true;
+    globe.controls().autoRotateSpeed = 0.22;
+
+    // Limit zoom
+    const ctrls = globe.controls();
+    ctrls.minDistance = 140;   // prima 180 (ora puoi avvicinarti molto di più)
+    ctrls.maxDistance = 520;  // opzionale: un po’ più out
+
+    /***********************************************************
+     * ULTRA SMOOTH ZOOM (wheel / trackpad)
+     * - No jumps
+     * - No overshoot
+     * - Apple-like inertia
+     ***********************************************************/
+    ctrls.enableZoom = false;
+
+    let zoomVelocity = 0;
+    let desiredDistance = globe.camera().position.distanceTo(ctrls.target);
+
+    const ZOOM_INTENSITY = 0.0042;  // 🔥 molto più forte
+    const ZOOM_DAMPING = 0.90;    // inerzia stabile
+    const ZOOM_LERP = 0.085;   // segue bene senza scatti
+
+    const canvasEl = () => globe.renderer().domElement;
+
+    const onWheelSmoothZoom = (e) => {
+      e.preventDefault();
+
+      // normalizza trackpad / mouse
+      const modeScale =
+        e.deltaMode === 1 ? 14 :
+          e.deltaMode === 2 ? 400 :
+            1;
+
+      const delta = e.deltaY * modeScale;
+
+      // accumula velocità invece di applicare subito
+      zoomVelocity += delta * ZOOM_INTENSITY;
+    };
+
+    requestAnimationFrame(() => {
+      try {
+        canvasEl().addEventListener('wheel', onWheelSmoothZoom, { passive: false });
+      } catch { }
+    });
+
+    const smoothZoomTick = () => {
+      try {
+        const cam = globe.camera();
+        const target = ctrls.target;
+
+        // applica velocità con damping
+        zoomVelocity *= ZOOM_DAMPING;
+        // evita botte eccessive (specialmente con mouse wheel aggressiva)
+        zoomVelocity = clamp(zoomVelocity, -18, 18);
+
+        desiredDistance += zoomVelocity;
+        desiredDistance = clamp(
+          desiredDistance,
+          ctrls.minDistance,
+          ctrls.maxDistance
+        );
+
+        const currentDistance = cam.position.distanceTo(target);
+        const nextDistance =
+          currentDistance + (desiredDistance - currentDistance) * ZOOM_LERP;
+
+        const dir = cam.position.clone().sub(target).normalize();
+        cam.position.copy(
+          target.clone().add(dir.multiplyScalar(nextDistance))
+        );
+      } catch { }
+
+      requestAnimationFrame(smoothZoomTick);
+    };
+
+    smoothZoomTick();
+
+    // Force perfect fit
+    const container = document.getElementById('globeViz');
+
+    const fitToContainer = () => {
+      try {
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        if (w && h) {
+          globe.width(w);
+          globe.height(h);
+        }
+      } catch { }
+    };
+
+    fitToContainer();
+
+    try {
+      const ro = new ResizeObserver(() => {
+        fitToContainer();
+      });
+      ro.observe(container);
+    } catch {
+      window.addEventListener('resize', () => fitToContainer());
+    }
+
+    const controls = globe.controls();
+    const centerTick = () => {
+      try {
+        controls.target.set(0, 0, 0);
+      } catch { }
+      requestAnimationFrame(centerTick);
+    };
+    centerTick();
+
+    // Lighting
+    const scene = globe.scene();
+
+    // 3D starfield
+    const starsGeometry = new THREE.BufferGeometry();
+    const starCount = 2400;
+    const positions = new Float32Array(starCount * 3);
+
+    for (let i = 0; i < starCount; i++) {
+      const radius = 1400 + Math.random() * 800;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+
+      positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+      positions[i * 3 + 1] = radius * Math.cos(phi);
+      positions[i * 3 + 2] = radius * Math.sin(phi) * Math.sin(theta);
+    }
+
+    starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    const starsMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.9,
+      sizeAttenuation: false,
+      transparent: true,
+      opacity: 0.85
+    });
+
+    const starField = new THREE.Points(starsGeometry, starsMaterial);
+    scene.add(starField);
+
+    try {
+      globe.camera().far = 5000;
+      globe.camera().updateProjectionMatrix();
+    } catch { }
+
+    const ambient = new THREE.AmbientLight(0xffffff, 0.22);
+    scene.add(ambient);
+
+    const key = new THREE.DirectionalLight(0xffffff, 0.95);
+    key.position.set(1.8, 1.1, 1.4);
+    scene.add(key);
+
+    const rim = new THREE.DirectionalLight(0xffffff, 0.22);
+    rim.position.set(-2.0, -0.9, -1.6);
+    scene.add(rim);
+
+    window.addEventListener('resize', () => {
+      hideTooltip();
+      hidePopup();
+    });
+
+    document.addEventListener('click', () => hideTooltip());
+
+    /***********************************************************
+     * CURSOR BEHAVIOR
+     ***********************************************************/
+    const appRoot = document.querySelector('.app');
+
+    requestAnimationFrame(() => {
+      try {
+        appRoot.classList.add('cursor-grab');
+        const canvas = globe.renderer().domElement;
+
+        const onDown = () => {
+          appRoot.classList.add('cursor-grabbing');
+          appRoot.classList.remove('cursor-grab');
+        };
+
+        const onUp = () => {
+          appRoot.classList.remove('cursor-grabbing');
+          appRoot.classList.add('cursor-grab');
+        };
+
+        canvas.addEventListener('pointerdown', onDown);
+        window.addEventListener('pointerup', onUp);
+        window.addEventListener('pointercancel', onUp);
+        window.addEventListener('blur', onUp);
+      } catch {
+        // no-op
+      }
+    });
+
+    /***********************************************************
+     * LIGHTWEIGHT RUNTIME TESTS
+     ***********************************************************/
+    (function runTests() {
+      const results = [];
+      const assert = (name, condition) => results.push({ name, ok: !!condition });
+
+      try {
+        assert('DOM: #globeViz exists', !!document.getElementById('globeViz'));
+        assert('DOM: topbar exists', !!document.getElementById('topbar'));
+        assert('Globe: instance created', typeof globe === 'function' || !!globe);
+        assert('Controls: available', !!globe.controls && !!globe.controls());
+
+        assert('Centering: transparent overlay, no shift', true);
+      } catch (e) {
+        results.push({ name: 'Tests threw an error', ok: false, error: String(e) });
+      }
+
+      try {
+        const failed = results.filter(r => !r.ok);
+        if (failed.length) {
+          console.groupCollapsed('[Fraud Capital Markets] Tests: FAILED');
+          console.table(results);
+          console.groupEnd();
+        } else {
+          console.groupCollapsed('[Fraud Capital Markets] Tests: OK');
+          console.table(results);
+          console.groupEnd();
+        }
+      } catch { }
+    })();
+    /***********************************************************
+     * HOMEPAGE LOGIC - CYBER TRANSITION
+     ***********************************************************/
+    const enterBtn = document.getElementById('enterBtn');
+    const homepage = document.getElementById('homepage');
+
+    // Inject Breach Text Container
+    const breachDiv = document.createElement('div');
+    breachDiv.className = 'breach-text';
+    breachDiv.innerHTML = 'INITIALIZING...';
+    homepage.appendChild(breachDiv);
+
+    if (enterBtn && homepage) {
+      enterBtn.addEventListener('click', () => {
+        // 1. Activate Glitch Mode
+        homepage.classList.add('glitch-active');
+
+        // 2. Change Text to look like code execution
+        enterBtn.innerHTML = '<span>> EXECUTING_BREACH...</span>';
+        enterBtn.style.borderColor = 'red';
+        enterBtn.style.color = 'red';
+        enterBtn.style.background = 'rgba(255,0,0,0.1)';
+
+        // 3. Trigger Flash/Overlay Sequence
+        setTimeout(() => {
+          breachDiv.innerText = "ACCESS GRANTED";
+          breachDiv.classList.add('active');
+        }, 400);
+
+        // 4. Final Unlock (Fade out)
+        setTimeout(() => {
+          homepage.classList.remove('glitch-active');
+          homepage.classList.add('hidden'); // Fade out by CSS
+
+          // Optional: Zoom globe rapidly
+          if (typeof globe !== 'undefined') {
+            globe.controls().autoRotateSpeed = 5.0;
+            setTimeout(() => { globe.controls().autoRotateSpeed = 0.22; }, 2000);
+          }
+
+        }, 1400); // Wait for the transition "drama"
+
+        setTimeout(() => {
+          homepage.style.display = 'none';
+        }, 2200);
+      });
+    }
+
+  </script>
+</body>
+
+</html>
